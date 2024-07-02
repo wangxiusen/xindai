@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信贷系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+        .container {
+            width: 1000px;
+            margin: 20px auto;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .header h1 {
+            margin: 0;
+            color: #d32f2f;
+            cursor: pointer;
+        }
+        .user-info {
+            color: #666;
+        }
+        .main-content {
+            display: flex;
+            margin-top: 20px;
+        }
+        .sidebar {
+            width: 200px;
+            border-right: 1px solid #ddd;
+            padding-right: 20px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 10px 0;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #d32f2f;
+        }
+        .order-details {
+            flex: 1;
+            padding-left: 20px;
+        }
+        .order-details h2 {
+            color: #d32f2f;
+        }
+        .tabs {
+            display: flex;
+            gap: 5px;
+            padding: 5px;
+            border-radius: 5px;
+            /*background-color: #d32f2f;*/
+        }
+        .tabs button {
+            padding: 10px;
+            border: none;
+            background-color: transparent;
+            color: #fff;
+            cursor: pointer;
+            flex: 1;
+        }
+        .order-info {
+            border-top: 1px solid #ddd;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+        .order-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .order-info th, .order-info td {
+            text-align: left;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+        .order-info th {
+            background-color: #f5f5f5;
+        }
+        .buttons {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .buttons button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            background-color: #d32f2f;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .buttons button:hover {
+            background-color: #b71c1c;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .tabs button.active {
+            background-color: green;
+        }
+        .tabs button.inactive {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="edit-title">个人信贷审核系统</h1>
+            <div class="user-info">
+                您好，admin011 | <a href="#" style="color: #d32f2f;">修改密码</a> | <a href="#" style="color: #d32f2f;">退出</a>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="sidebar">
+                <ul>
+                    <li><a href="#">贷款订单进度查询</a></li>
+                    <li><a href="#">贷款账单查询</a></li>
+                    <li><a href="#">预授信额度查询</a></li>
+                    <li><a href="#">预授信额度管理</a></li>
+                    <li><a href="#">贷款归还及结清</a></li>
+                    <li><a href="#">贷后服务预申请</a></li>
+                </ul>
+                <h3>个人中心</h3>
+                <ul>
+                    <li><a href="#">基础资料</a></li>
+                    <li><a href="#">人员管理</a></li>
+                </ul>
+            </div>
+            <div class="order-details">
+                <h2>订单详情</h2>
+                <div class="tabs" id="progress-tabs">
+                    <button data-progress="1">提交申请</button>
+                    <button data-progress="2">订单初审</button>
+                    <button data-progress="3">人工复核</button>
+                    <button data-progress="4">进件审核</button>
+                    <button data-progress="5">审核额度</button>
+                    <button data-progress="6">预约办理</button>
+                    <button data-progress="7">银行签约放款</button>
+                </div>
+                <div class="order-info">
+                    <table>
+                        <tr>
+                            <th>订单编号</th>
+                            <td id="order-id">DCGT17761225528</td>
+                            <th>审核时间</th>
+                            <td id="review-time">2024-06-29</td>
+                        </tr>
+                        <tr>
+                            <th>申请人</th>
+                            <td id="applicant">王*</td>
+                            <th>还款方式</th>
+                            <td id="repayment-method">等额本息</td>
+                        </tr>
+                        <tr>
+                            <th>审核额度</th>
+                            <td id="review-amount">58000.00</td>
+                            <th>贷款用途</th>
+                            <td id="loan-purpose">其他</td>
+                        </tr>
+                        <tr>
+                            <th>贷款期限</th>
+                            <td id="loan-term">24期</td>
+                            <th>月利率</th>
+                            <td id="monthly-rate">0.79%</td>
+                        </tr>
+                        <tr>
+                            <th>电话号码</th>
+                            <td id="phone-number">131****7664</td>
+                            <th>签约机构所在地</th>
+                            <td id="signing-location">天津市河东区三联大厦八层签约中心</td>
+                        </tr>
+                        <tr>
+                            <th>是否实名</th>
+                            <td id="is-authenticated">实名</td>
+                            <th>签约放款时间</th>
+                            <td id="signing-time">2024-06-29 10:00</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="buttons">
+                    <button id="export-button">导出</button>
+                    <button>返回</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>编辑订单详情</h2>
+            <div class="form-group">
+                <label for="order-id-input">订单编号</label>
+                <input type="text" id="order-id-input">
+            </div>
+            <div class="form-group">
+                <label for="applicant-input">申请人</label>
+                <input type="text" id="applicant-input">
+            </div>
+            <div class="form-group">
+                <label for="review-amount-input">审核额度</label>
+                <input type="text" id="review-amount-input">
+            </div>
+            <div class="form-group">
+                <label for="loan-term-input">贷款期限</label>
+                <input type="text" id="loan-term-input">
+            </div>
+            <div class="form-group">
+                <label for="phone-number-input">电话号码</label>
+                <input type="text" id="phone-number-input">
+            </div>
+            <div class="form-group">
+                <label for="is-authenticated-input">是否实名</label>
+                <input type="text" id="is-authenticated-input">
+            </div>
+            <div class="form-group">
+                <label for="review-time-input">审核时间</label>
+                <input type="text" id="review-time-input">
+            </div>
+            <div class="form-group">
+                <label for="repayment-method-input">还款方式</label>
+                <input type="text" id="repayment-method-input">
+            </div>
+            <div class="form-group">
+                <label for="loan-purpose-input">贷款用途</label>
+                <input type="text" id="loan-purpose-input">
+            </div>
+            <div class="form-group">
+                <label for="monthly-rate-input">月利率</label>
+                <input type="text" id="monthly-rate-input">
+            </div>
+            <div class="form-group">
+                <label for="signing-location-input">签约机构所在地</label>
+                <input type="text" id="signing-location-input">
+            </div>
+            <div class="form-group">
+                <label for="signing-time-input">签约放款时间</label>
+                <input type="text" id="signing-time-input">
+            </div>
+            <div class="form-group">
+                <label for="progress-input">进度</label>
+                <input type="number" id="progress-input" min="1" max="7" value="5">
+            </div>
+            <button id="save-button">保存</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // 获取模态框
+        var modal = document.getElementById("myModal");
+
+        // 获取打开模态框的按钮
+        var btn = document.getElementById("edit-title");
+
+        // 获取 <span> 元素，点击它可以关闭模态框
+        var span = document.getElementsByClassName("close")[0];
+
+        // 当点击按钮时，打开模态框
+        btn.onclick = function() {
+            document.getElementById("order-id-input").value = document.getElementById("order-id").innerText;
+            document.getElementById("applicant-input").value = document.getElementById("applicant").innerText;
+            document.getElementById("review-amount-input").value = document.getElementById("review-amount").innerText;
+            document.getElementById("loan-term-input").value = document.getElementById("loan-term").innerText;
+            document.getElementById("phone-number-input").value = document.getElementById("phone-number").innerText;
+            document.getElementById("is-authenticated-input").value = document.getElementById("is-authenticated").innerText;
+            document.getElementById("review-time-input").value = document.getElementById("review-time").innerText;
+            document.getElementById("repayment-method-input").value = document.getElementById("repayment-method").innerText;
+            document.getElementById("loan-purpose-input").value = document.getElementById("loan-purpose").innerText;
+            document.getElementById("monthly-rate-input").value = document.getElementById("monthly-rate").innerText;
+            document.getElementById("signing-location-input").value = document.getElementById("signing-location").innerText;
+            document.getElementById("signing-time-input").value = document.getElementById("signing-time").innerText;
+            document.getElementById("progress-input").value = document.getElementById("progress-tabs").querySelector(".active") ? document.getElementById("progress-tabs").querySelector(".active").dataset.progress : 5;
+            modal.style.display = "block";
+        }
+
+        // 当点击 <span> (x), 关闭模态框
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // 当点击模态框内容外的区域，关闭模态框
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // 保存按钮点击事件
+        document.getElementById("save-button").onclick = function() {
+            document.getElementById("order-id").innerText = document.getElementById("order-id-input").value;
+            document.getElementById("applicant").innerText = document.getElementById("applicant-input").value;
+            document.getElementById("review-amount").innerText = document.getElementById("review-amount-input").value;
+            document.getElementById("loan-term").innerText = document.getElementById("loan-term-input").value;
+            document.getElementById("phone-number").innerText = document.getElementById("phone-number-input").value;
+            document.getElementById("is-authenticated").innerText = document.getElementById("is-authenticated-input").value;
+            document.getElementById("review-time").innerText = document.getElementById("review-time-input").value;
+            document.getElementById("repayment-method").innerText = document.getElementById("repayment-method-input").value;
+            document.getElementById("loan-purpose").innerText = document.getElementById("loan-purpose-input").value;
+            document.getElementById("monthly-rate").innerText = document.getElementById("monthly-rate-input").value;
+            document.getElementById("signing-location").innerText = document.getElementById("signing-location-input").value;
+            document.getElementById("signing-time").innerText = document.getElementById("signing-time-input").value;
+            
+            var progress = document.getElementById("progress-input").value;
+            var tabs = document.getElementById("progress-tabs").querySelectorAll("button");
+            tabs.forEach(function(tab) {
+                if (parseInt(tab.dataset.progress) <= progress) {
+                    tab.classList.remove("inactive");
+                    tab.classList.add("active");
+                } else {
+                    tab.classList.remove("active");
+                    tab.classList.add("inactive");
+                }
+            });
+            
+            modal.style.display = "none";
+        }
+
+        // 设置默认进度为 5
+        document.getElementById("progress-input").value = 5;
+        var defaultProgress = 5;
+        var tabs = document.getElementById("progress-tabs").querySelectorAll("button");
+        tabs.forEach(function(tab) {
+            if (parseInt(tab.dataset.progress) <= defaultProgress) {
+                tab.classList.add("active");
+                tab.classList.remove("inactive");
+            } else {
+                tab.classList.add("inactive");
+                tab.classList.remove("active");
+            }
+        });
+
+        // 导出功能
+        document.getElementById("export-button").onclick = function() {
+            html2canvas(document.querySelector(".container")).then(function(canvas) {
+                var link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'screenshot.png';
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
